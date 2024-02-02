@@ -10,7 +10,8 @@ export const ForegroundAPI = {
   submit(data) {
     return request({
       method: 'POST',
-      url: '/front/submit'
+      url: '/front/submit',
+      data: data
     })
   }
 }
