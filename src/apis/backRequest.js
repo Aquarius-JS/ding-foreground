@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const request = axios.create({
-	baseURL: "/api",
+const backRequest = axios.create({
+	baseURL: "http://47.108.52.110:8888/api",
 	timeout: 1000 * 5
 });
 
-request.interceptors.request.use(
+backRequest.interceptors.request.use(
 	config => {
 		return config;
 	},
@@ -13,7 +13,7 @@ request.interceptors.request.use(
 		return Promise.reject(error);
 	}
 );
-request.interceptors.response.use(
+backRequest.interceptors.response.use(
 	response => {
 		return response.data;
 	},
@@ -22,4 +22,4 @@ request.interceptors.response.use(
 	}
 );
 
-export default request;
+export default backRequest;

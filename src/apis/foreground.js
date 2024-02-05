@@ -1,17 +1,36 @@
-import request from "./request";
+import backRequest from "./backRequest";
+import frontRequest from "@/apis/frontRequest";
 
 export const ForegroundAPI = {
 	getProduct() {
-		return request({
+		return frontRequest({
 			method: "GET",
-			url: "/front/product"
+			url: "/product"
 		});
 	},
 	submit(data) {
-		return request({
+		return frontRequest({
 			method: "POST",
-			url: "/front/submit",
+			url: "/submit",
 			data: data
+		});
+	},
+	getDepartment() {
+		return backRequest({
+			method: "GET",
+			url: "/departments"
+		});
+	},
+	getPlatforms() {
+		return backRequest({
+			method: "GET",
+			url: "/platformlist"
+		});
+	},
+	getTransportations() {
+		return backRequest({
+			method: "GET",
+			url: "/physical/distribution/management"
 		});
 	}
 };
