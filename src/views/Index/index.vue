@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { cloneDeep, remove } from "lodash";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 import { ForegroundAPI } from "@/apis";
 import ProductSelect from "@/components/ProductSelect/index.vue";
 import SpecialProduct from "@/components/SpecialProduct/index.vue";
@@ -37,6 +37,7 @@ const delSpecial = name => {
 	remove(form.value.specialProduct, { name });
 };
 const submit = async () => {
+	resultForm.value = null;
 	let res = await ForegroundAPI.submit({
 		...form.value,
 		money: form.value.money * 1,
@@ -69,13 +70,6 @@ const submit = async () => {
 		resultForm.value.product = resultForm.value.product.filter(item => item.num > 0);
 		resultForm.value.specialProduct = resultForm.value.specialProduct.filter(item => item.num > 0);
 		resultForm.value.giftProduct = resultForm.value.giftProduct.filter(item => item.num > 0);
-		formInit();
-	} else {
-		ElMessage({
-			type: "error",
-			message: res.data
-		});
-		console.log("test");
 	}
 };
 const showProduct = product => {
