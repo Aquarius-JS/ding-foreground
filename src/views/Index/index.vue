@@ -1,46 +1,56 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { ForegroundAPI } from "@/apis";
+import ProductSelect from "@/components/ProductSelect/index.vue";
 const ProductList = ref([]);
+const PriceSystem = ref([]);
 const DepartmentList = ref([]);
 const PlatFormList = ref([]);
 const TransportationList = ref([]);
 const init = async () => {
 	let res = await ForegroundAPI.getProduct();
 	ProductList.value = res.data;
+	res = await ForegroundAPI.getPriceSystem();
+	PriceSystem.value = res.data;
 	res = await ForegroundAPI.getDepartment();
 	DepartmentList.value = res.data;
 	res = await ForegroundAPI.getPlatforms();
 	PlatFormList.value = res.data;
 	res = await ForegroundAPI.getTransportations();
 	TransportationList.value = res.data;
+	console.log(res.data);
 };
-const comProList = computed(() => {
-	return ProductList.value.map(item => ({
-		label: item.name,
-		value: { ...item }
-	}));
-});
-const comGiftProList = computed(() => {
-	return ProductList.value.map(item => ({
-		label: item.name,
-		value: { ...item }
-	}));
-});
 const form = ref({
 	product: [],
 	giftProduct: [],
+	specialProduct: [],
+	priceSystem: "",
 	department: "",
 	platform: "",
 	onepieceforshipping: false,
-	transportationMethod: ""
+	transportationMethod: "",
+	money: 0,
+	feeRatio: 0
 });
 const submit = async () => {
-	let res = await ForegroundAPI.submit(form.value);
+	let res = await ForegroundAPI.submit({
+		...form.value,
+		money: form.value.money * 1,
+		feeRatio: form.value.feeRatio * 1,
+		transportationMethod: "normal"
+	});
 	console.log(res);
 };
 onMounted(async () => {
-	init();
+	await init();
+	form.value.product = ProductList.value.map(item => ({
+		name: item.name,
+		num: 0
+	}));
+	form.value.giftProduct = ProductList.value.map(item => ({
+		name: item.name,
+		num: 0
+	}));
 });
 </script>
 
@@ -49,31 +59,26 @@ onMounted(async () => {
 		<el-container>
 			<el-aside width="200px">
 				<div class="left">
-					<el-select-v2
-						v-model="form.product"
-						:options="comProList"
-						value-key="name"
-						placeholder="请选择至少一个产品"
-						style="width: 200px"
-						:max-collapse-tags="10"
-						clearable
+					<product-select option-name="请选择商品" v-model:list="form.product" />
+					<product-select option-name="请选择赠品" v-model:list="form.giftProduct" />
+					<el-select
+						v-model="form.priceSystem"
+						class="m-2"
 						filterable
-						multiple
-					/>
-					<el-select-v2
-						v-model="form.giftProduct"
-						:options="comGiftProList"
-						value-key="name"
-						placeholder="请选择增品"
+						placeholder="请选择价格体系"
 						style="width: 200px"
-						:max-collapse-tags="10"
-						clearable
-						filterable
-						multiple
-					/>
+					>
+						<el-option
+							v-for="item in PriceSystem"
+							:key="item.id"
+							:label="item.price_system_name"
+							:value="item.price_system_name"
+						/>
+					</el-select>
 					<el-select
 						v-model="form.department"
 						class="m-2"
+						filterable
 						placeholder="请选择部门"
 						style="width: 200px"
 					>
@@ -87,6 +92,7 @@ onMounted(async () => {
 					<el-select
 						v-model="form.platform"
 						class="m-2"
+						filterable
 						placeholder="请选择平台"
 						style="width: 200px"
 					>
@@ -117,6 +123,14 @@ onMounted(async () => {
 							:value="item.name"
 						/>
 					</el-select>
+					<el-form label-position="top">
+						<el-form-item label="money">
+							<el-input v-model="form.money" placeholder="请输入money" />
+						</el-form-item>
+						<el-form-item label="feeRadio">
+							<el-input v-model="form.feeRatio" placeholder="请输入feeRatio" />
+						</el-form-item>
+					</el-form>
 					<el-button type="primary" @click="submit">查询</el-button>
 				</div>
 			</el-aside>
@@ -128,6 +142,14 @@ onMounted(async () => {
 <style scoped lang="scss">
 :deep(.el-input__wrapper) {
 	width: 180px;
+}
+:deep(.el-form-item){
+	margin-bottom: 8px;
+}
+:deep(.el-form-item__label){
+	font-size: 12px;
+	margin-bottom: 4px !important;
+	line-height: 12px !important;
 }
 .index {
 	display: flex;

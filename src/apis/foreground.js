@@ -15,6 +15,12 @@ export const ForegroundAPI = {
 			data: data
 		});
 	},
+	getPriceSystem() {
+		return backRequest({
+			method: "GET",
+			url: "/price_systemlist"
+		});
+	},
 	getDepartment() {
 		return backRequest({
 			method: "GET",
