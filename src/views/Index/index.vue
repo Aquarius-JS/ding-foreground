@@ -1,12 +1,15 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
+import { remove } from "lodash";
 import { ForegroundAPI } from "@/apis";
 import ProductSelect from "@/components/ProductSelect/index.vue";
+import SpecialProduct from "@/components/SpecialProduct/index.vue";
 const ProductList = ref([]);
 const PriceSystem = ref([]);
 const DepartmentList = ref([]);
 const PlatFormList = ref([]);
 const TransportationList = ref([]);
+const color = ref("");
 const init = async () => {
 	let res = await ForegroundAPI.getProduct();
 	ProductList.value = res.data;
@@ -18,7 +21,6 @@ const init = async () => {
 	PlatFormList.value = res.data;
 	res = await ForegroundAPI.getTransportations();
 	TransportationList.value = res.data;
-	console.log(res.data);
 };
 const form = ref({
 	product: [],
@@ -32,14 +34,24 @@ const form = ref({
 	money: 0,
 	feeRatio: 0
 });
+const addSpecial = () => {
+	form.value.specialProduct.unshift({
+		name: "",
+		num: 1,
+		cost: 0
+	});
+};
+const delSpecial = name => {
+	console.log(name);
+	remove(form.value.specialProduct, { name });
+};
 const submit = async () => {
 	let res = await ForegroundAPI.submit({
 		...form.value,
 		money: form.value.money * 1,
-		feeRatio: form.value.feeRatio * 1,
-		transportationMethod: "normal"
+		feeRatio: form.value.feeRatio * 1
 	});
-	console.log(res);
+	color.value = res.color;
 };
 onMounted(async () => {
 	await init();
@@ -61,6 +73,12 @@ onMounted(async () => {
 				<div class="left">
 					<product-select option-name="请选择商品" v-model:list="form.product" />
 					<product-select option-name="请选择赠品" v-model:list="form.giftProduct" />
+					<special-product
+						option-name="添加特殊商品"
+						v-model:list="form.specialProduct"
+						@addSpecial="addSpecial"
+						@delSpecial="delSpecial"
+					/>
 					<el-select
 						v-model="form.priceSystem"
 						class="m-2"
@@ -124,17 +142,21 @@ onMounted(async () => {
 						/>
 					</el-select>
 					<el-form label-position="top">
-						<el-form-item label="money">
-							<el-input v-model="form.money" placeholder="请输入money" />
+						<el-form-item label="售价">
+							<el-input v-model="form.money" placeholder="请输入售价" />
 						</el-form-item>
-						<el-form-item label="feeRadio">
-							<el-input v-model="form.feeRatio" placeholder="请输入feeRatio" />
+						<el-form-item label="费比佣金">
+							<el-input v-model="form.feeRatio" placeholder="请输入费比佣金" />
 						</el-form-item>
 					</el-form>
 					<el-button type="primary" @click="submit">查询</el-button>
 				</div>
 			</el-aside>
-			<el-main>Main</el-main>
+			<el-main>
+				<el-card>
+					
+				</el-card>
+			</el-main>
 		</el-container>
 	</div>
 </template>
@@ -143,10 +165,10 @@ onMounted(async () => {
 :deep(.el-input__wrapper) {
 	width: 180px;
 }
-:deep(.el-form-item){
+:deep(.el-form-item) {
 	margin-bottom: 8px;
 }
-:deep(.el-form-item__label){
+:deep(.el-form-item__label) {
 	font-size: 12px;
 	margin-bottom: 4px !important;
 	line-height: 12px !important;

@@ -2,11 +2,18 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 
 export const useForegroundStore = defineStore('foreground";', () => {
-	const count = ref(0);
-	const doubleCount = computed(() => count.value * 2);
-	function increment() {
-		count.value++;
-	}
+	const form = ref({
+		product: [],
+		giftProduct: [],
+		specialProduct: [],
+		priceSystem: "",
+		department: "",
+		platform: "",
+		onepieceforshipping: false,
+		transportationMethod: "",
+		money: 0,
+		feeRatio: 0
+	});
 
-	return { count, doubleCount, increment };
+	return { form };
 });
