@@ -5,7 +5,6 @@ const dialogVisible = ref(false);
 const filterName = ref("");
 
 const rowStyle = ({ row }) => {
-	console.log(row);
 	if (filterName.value === "") return "";
 	if (!row.name?.includes(filterName.value)) return "display: none";
 };

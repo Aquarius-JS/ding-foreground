@@ -23,7 +23,7 @@ const dialogVisible = ref(false);
 						<el-input-number v-model="row.num" size="small" :min="0" />
 					</template>
 				</el-table-column>
-				<el-table-column label="金额">
+				<el-table-column label="金额(￥)">
 					<template #default="{ row }">
 						<el-input-number v-model="row.cost" :precision="2" size="small" :min="0" />
 					</template>
