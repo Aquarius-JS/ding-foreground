@@ -41,7 +41,10 @@ const submit = async () => {
 	let res = await ForegroundAPI.submit({
 		...form.value,
 		money: form.value.money * 1,
-		feeRatio: form.value.feeRatio * 1
+		feeRatio: form.value.feeRatio * 1,
+		onepieceforshipping: form.value.department.includes("分销")
+			? form.value.onepieceforshipping
+			: undefined
 	});
 	console.log(res);
 	// 有结果
@@ -148,6 +151,13 @@ onMounted(async () => {
 							:value="item.department_name"
 						/>
 					</el-select>
+					<div class="one flex items-center text-sm" v-if="form.department.includes('分销')">
+						<span>一件代发：</span>
+						<el-radio-group v-model="form.onepieceforshipping" class="ml-4">
+							<el-radio :label="true">是</el-radio>
+							<el-radio :label="false">否</el-radio>
+						</el-radio-group>
+					</div>
 					<el-select
 						v-model="form.platform"
 						class="m-2"
@@ -162,13 +172,6 @@ onMounted(async () => {
 							:value="item.platform_name"
 						/>
 					</el-select>
-					<div class="one flex items-center text-sm">
-						<span>一件代发：</span>
-						<el-radio-group v-model="form.onepieceforshipping" class="ml-4">
-							<el-radio :label="true">是</el-radio>
-							<el-radio :label="false">否</el-radio>
-						</el-radio-group>
-					</div>
 					<el-select
 						v-model="form.transportationMethod"
 						class="m-2"
@@ -203,6 +206,7 @@ onMounted(async () => {
 							<p>
 								<span>{{ resultForm?.priceSystem }}</span> |
 								<span>{{ resultForm?.department }}</span> |
+								<span v-if="resultForm?.onepieceforshipping">一件代发</span>
 								<span>{{ resultForm?.platform }}</span> |
 								<span>{{ resultForm?.transportationMethod }}</span>
 							</p>
