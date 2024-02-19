@@ -24,7 +24,7 @@ const rowClassName = row => {
 				<el-input placeholder="名称搜索" v-model="filterName" clearable />
 			</div>
 			<el-table
-			height="400"
+				height="400"
 				:data="list"
 				max-height="400"
 				table-layout="fixed"
@@ -38,6 +38,9 @@ const rowClassName = row => {
 					</template>
 				</el-table-column>
 			</el-table>
+			<template #footer>
+				<el-button @click="dialogVisible = false"> 确认 </el-button>
+			</template>
 		</el-dialog>
 	</div>
 </template>
