@@ -9,6 +9,9 @@ export const ForegroundAPI = {
 		});
 	},
 	submit(data) {
+		data.product = data.product.filter(item => item.num > 0);
+		data.giftProduct = data.giftProduct.filter(item => item.num > 0);
+		data.specialProduct = data.specialProduct.filter(item => item.num > 0);
 		return frontRequest({
 			method: "POST",
 			url: "/submit",
