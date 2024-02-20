@@ -36,6 +36,9 @@ const dialogVisible = ref(false);
 					</template>
 				</el-table-column>
 			</el-table>
+			<template #footer>
+				<el-button @click="dialogVisible = false"> 确认 </el-button>
+			</template>
 		</el-dialog>
 	</div>
 </template>
