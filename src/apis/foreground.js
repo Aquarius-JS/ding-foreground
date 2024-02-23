@@ -18,6 +18,13 @@ export const ForegroundAPI = {
 			data: data
 		});
 	},
+	save(data) {
+		return frontRequest({
+			method:"POST",
+			url:"/save",
+			data:data
+		})
+	},
 	getPriceSystem() {
 		return backRequest({
 			method: "GET",
