@@ -5,12 +5,14 @@ import { ElMessage } from "element-plus";
 import { ForegroundAPI } from "@/apis";
 import ProductSelect from "@/components/ProductSelect/index.vue";
 import SpecialProduct from "@/components/SpecialProduct/index.vue";
+import frontRequest from "../../apis/frontRequest";
 const ProductList = ref([]);
 const PriceSystem = ref([]);
 const DepartmentList = ref([]);
 const PlatFormList = ref([]);
 const TransportationList = ref([]);
 const color = ref("");
+const id = ref("");
 const message = ref("");
 const form = ref({
 	product: [],
@@ -46,6 +48,7 @@ const submit = async () => {
 			? form.value.onepieceforshipping
 			: undefined
 	});
+	id.value = res.id;
 	console.log(res);
 	// 有结果
 	if (res.color) {
@@ -73,6 +76,15 @@ const submit = async () => {
 		resultForm.value.product = resultForm.value.product.filter(item => item.num > 0);
 		resultForm.value.specialProduct = resultForm.value.specialProduct.filter(item => item.num > 0);
 		resultForm.value.giftProduct = resultForm.value.giftProduct.filter(item => item.num > 0);
+	}
+};
+const saveHandle = async () => {
+	let res = await ForegroundAPI.save({ id: id.value });
+	if (res) {
+		ElMessage({
+			type: "success",
+			message: "保存成功"
+		});
 	}
 };
 const showProduct = product => {
@@ -216,7 +228,8 @@ onMounted(async () => {
 							</p>
 						</div>
 						<div class="right">
-							<el-tag :type="color">{{ message }}</el-tag>
+							<el-tag :type="color" size="large"></el-tag>
+							<el-button type="primary" @click="saveHandle">保存</el-button>
 						</div>
 					</div>
 					<div class="product" v-show="showProduct(resultForm?.product)">
@@ -284,6 +297,10 @@ onMounted(async () => {
 			display: flex;
 			flex-direction: column;
 			justify-content: flex-start;
+		}
+		.right {
+			display: flex;
+			gap: 20px;
 		}
 	}
 	.product {
