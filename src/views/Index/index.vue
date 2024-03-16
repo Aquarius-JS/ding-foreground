@@ -13,7 +13,6 @@ const PlatFormList = ref([]);
 const TransportationList = ref([]);
 const color = ref("");
 const id = ref("");
-const message = ref("");
 const form = ref({
 	product: [],
 	giftProduct: [],
@@ -52,26 +51,7 @@ const submit = async () => {
 	console.log(res);
 	// 有结果
 	if (res.color) {
-		color.value =
-			res.color === "green"
-				? "success"
-				: res.color === "red"
-				? "danger"
-				: res.color === "blue"
-				? "primary"
-				: res.color === "yellow"
-				? "warning"
-				: "";
-		message.value =
-			res.color === "green"
-				? "> 业务利润率, > 财务利润率, > 控价"
-				: res.color === "red"
-				? "< 业务利润率, < 财务利润率"
-				: res.color === "blue"
-				? "< 业务利润率, > 财务利润率, > 控价"
-				: res.color === "yellow"
-				? "> 业务利润率, > 财务利润率, < 控价"
-				: "";
+		color.value = res.color;
 		resultForm.value = cloneDeep(form.value);
 		resultForm.value.product = resultForm.value.product.filter(item => item.num > 0);
 		resultForm.value.specialProduct = resultForm.value.specialProduct.filter(item => item.num > 0);
@@ -224,11 +204,11 @@ onMounted(async () => {
 							</p>
 							<p>
 								<span>售价：{{ resultForm?.money }} ￥</span> |
-								<span>费比佣金：{{ resultForm?.feeRatio }} ￥</span>
+								<span>费比佣金：{{ resultForm?.feeRatio * 100 }} %</span>
 							</p>
 						</div>
 						<div class="right">
-							<el-tag :type="color" size="large"></el-tag>
+							<div :class="color" />
 							<el-button type="primary" @click="saveHandle">保存</el-button>
 						</div>
 					</div>
@@ -249,7 +229,7 @@ onMounted(async () => {
 						</el-table>
 					</div>
 					<div class="product" v-show="showProduct(resultForm?.giftProduct)">
-						<h3>增品</h3>
+						<h3>赠品</h3>
 						<el-table :data="resultForm?.giftProduct" style="width: 100%">
 							<el-table-column prop="name" label="名称" width=""> </el-table-column>
 							<el-table-column prop="num" label="数量" width=""> </el-table-column>
@@ -277,7 +257,7 @@ onMounted(async () => {
 .index {
 	display: flex;
 	height: 90vh;
-	width: 90vw;
+	box-sizing: border-box;
 	.left {
 		display: flex;
 		flex-direction: column;
