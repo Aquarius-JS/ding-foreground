@@ -23,7 +23,8 @@ const form = ref({
 	onepieceforshipping: false,
 	transportationMethod: "",
 	money: 0,
-	feeRatio: 0
+	feeRatio: 0,
+	name: ""
 });
 const resultForm = ref();
 const addSpecial = () => {
@@ -38,6 +39,18 @@ const delSpecial = name => {
 	remove(form.value.specialProduct, { name });
 };
 const submit = async () => {
+	if (form.value.money <= 0) {
+		ElMessage({
+			type: "warning",
+			message: "售价不能为 0"
+		});
+		return;
+	} else if(form.value.name === "") {
+		ElMessage({
+			type:"warning",
+			message:"请输入查询人员信息"
+		})
+	}
 	resultForm.value = null;
 	let res = await ForegroundAPI.submit({
 		...form.value,
@@ -178,11 +191,14 @@ onMounted(async () => {
 						/>
 					</el-select>
 					<el-form label-position="top">
-						<el-form-item label="售价">
+						<el-form-item label="售价" required>
 							<el-input v-model="form.money" placeholder="请输入售价" />
 						</el-form-item>
 						<el-form-item label="费比佣金">
 							<el-input v-model="form.feeRatio" placeholder="请输入费比佣金" />
+						</el-form-item>
+						<el-form-item label="查询人员信息" required>
+							<el-input v-model="form.name" placeholder="请输入您的信息" />
 						</el-form-item>
 					</el-form>
 					<el-button type="primary" @click="submit">查询</el-button>
@@ -205,6 +221,9 @@ onMounted(async () => {
 							<p>
 								<span>售价：{{ resultForm?.money }} ￥</span> |
 								<span>费比佣金：{{ resultForm?.feeRatio * 100 }} %</span>
+							</p>
+							<p>
+								<span>查询人信息：{{ resultForm?.name }} </span>
 							</p>
 						</div>
 						<div class="right">
