@@ -1,7 +1,8 @@
 import axios from "axios";
+import { IP } from '@/config/httpConfig'
 
 const backRequest = axios.create({
-	baseURL: "http://47.108.52.110:8888/api",
+	baseURL: `http://${IP}:8888/api`,
 	timeout: 1000 * 5
 });
 

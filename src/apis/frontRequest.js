@@ -1,7 +1,8 @@
 import axios from "axios";
+import { IP } from "@/config/httpConfig";
 
 const frontRequest = axios.create({
-	baseURL: "http://47.108.52.110:8888/front",
+	baseURL: `http://${IP}:8888/front`,
 	timeout: 1000 * 5
 });
 
