@@ -3,10 +3,14 @@ import { onMounted, ref, defineProps } from "vue";
 const props = defineProps(["optionName", "list"]);
 const dialogVisible = ref(false);
 const filterName = ref("");
+const isFilter = ref(false);
 
 const rowStyle = ({ row }) => {
-	if (filterName.value === "") return "";
-	if (!row.name?.includes(filterName.value)) return "display: none";
+	let res;
+	if (filterName.value === "") res = "";
+	if (!row.name?.includes(filterName.value)) res = "display: none";
+	if (isFilter.value && row.num < 1) res = "display: none";
+	return res;
 };
 const rowClassName = row => {
 	if (filterName.value === "") return "";
@@ -20,8 +24,16 @@ const rowClassName = row => {
 			{{ optionName }}
 		</el-button>
 		<el-dialog :title="optionName" v-model="dialogVisible">
-			<div style="width: 200px">
+			<div style="width: 200px; display: flex; gap: 20px">
 				<el-input placeholder="名称搜索" v-model="filterName" clearable />
+				<el-switch
+					width="100px"
+					v-model="isFilter"
+					inline-prompt
+					style="--el-switch-off-color: gray"
+					active-text="已选择"
+					inactive-text="所有商品"
+				/>
 			</div>
 			<el-table
 				height="400"

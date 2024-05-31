@@ -39,17 +39,54 @@ const delSpecial = name => {
 	remove(form.value.specialProduct, { name });
 };
 const submit = async () => {
+	if (!form.value.product.find(item => item.num > 0)) {
+		ElMessage({
+			type: "warning",
+			message: "请至少选择一件商品"
+		});
+		return;
+	}
+	if (!form.value.priceSystem) {
+		ElMessage({
+			type: "warning",
+			message: "请选择价格体系"
+		});
+		return;
+	}
+	if (!form.value.department) {
+		ElMessage({
+			type: "warning",
+			message: "请选择部门"
+		});
+		return;
+	}
+	if (!form.value.platform) {
+		ElMessage({
+			type: "warning",
+			message: "请选择平台"
+		});
+		return;
+	}
+	if (!form.value.transportationMethod) {
+		ElMessage({
+			type: "warning",
+			message: "请选择运输方式"
+		});
+		return;
+	}
 	if (form.value.money <= 0) {
 		ElMessage({
 			type: "warning",
 			message: "售价不能为 0"
 		});
 		return;
-	} else if(form.value.name === "") {
+	}
+	if (form.value.name === "") {
 		ElMessage({
-			type:"warning",
-			message:"请输入查询人员信息"
-		})
+			type: "warning",
+			message: "请输入查询人员信息"
+		});
+		return;
 	}
 	resultForm.value = null;
 	let res = await ForegroundAPI.submit({
@@ -60,7 +97,7 @@ const submit = async () => {
 			? form.value.onepieceforshipping
 			: undefined
 	});
-	id.value = res.id;
+	id.value = res?.id;
 	console.log(res);
 	// 有结果
 	if (res.color) {
@@ -69,6 +106,11 @@ const submit = async () => {
 		resultForm.value.product = resultForm.value.product.filter(item => item.num > 0);
 		resultForm.value.specialProduct = resultForm.value.specialProduct.filter(item => item.num > 0);
 		resultForm.value.giftProduct = resultForm.value.giftProduct.filter(item => item.num > 0);
+	} else {
+		ElMessage({
+			type: "error",
+			message: res.data
+		});
 	}
 };
 const saveHandle = async () => {
@@ -128,74 +170,98 @@ onMounted(async () => {
 						@addSpecial="addSpecial"
 						@delSpecial="delSpecial"
 					/>
-					<el-select
-						v-model="form.priceSystem"
-						class="m-2"
-						filterable
-						placeholder="请选择价格体系"
-						style="width: 200px"
-					>
-						<el-option
-							v-for="item in PriceSystem"
-							:key="item.id"
-							:label="item.price_system_name"
-							:value="item.price_system_name"
-						/>
-					</el-select>
-					<el-select
-						v-model="form.department"
-						class="m-2"
-						filterable
-						placeholder="请选择部门"
-						style="width: 200px"
-					>
-						<el-option
-							v-for="item in DepartmentList"
-							:key="item.id"
-							:label="item.department_name"
-							:value="item.department_name"
-						/>
-					</el-select>
-					<div class="one flex items-center text-sm" v-if="form.department.includes('分销')">
-						<span>一件代发：</span>
-						<el-radio-group v-model="form.onepieceforshipping" class="ml-4">
-							<el-radio :label="true">是</el-radio>
-							<el-radio :label="false">否</el-radio>
-						</el-radio-group>
-					</div>
-					<el-select
-						v-model="form.platform"
-						class="m-2"
-						filterable
-						placeholder="请选择平台"
-						style="width: 200px"
-					>
-						<el-option
-							v-for="item in PlatFormList"
-							:key="item.id"
-							:label="item.platform_name"
-							:value="item.platform_name"
-						/>
-					</el-select>
-					<el-select
-						v-model="form.transportationMethod"
-						class="m-2"
-						placeholder="请选择运输方式"
-						style="width: 200px"
-					>
-						<el-option
-							v-for="item in TransportationList"
-							:key="item.id"
-							:label="item.name"
-							:value="item.name"
-						/>
-					</el-select>
 					<el-form label-position="top">
+						<el-form-item label="价格体系" required>
+							<el-select
+								v-model="form.priceSystem"
+								class="m-2"
+								filterable
+								placeholder="请选择价格体系"
+								style="width: 200px"
+							>
+								<el-option
+									v-for="item in PriceSystem"
+									:key="item.id"
+									:label="item.price_system_name"
+									:value="item.price_system_name"
+								/>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="部门" required>
+							<el-select
+								v-model="form.department"
+								class="m-2"
+								filterable
+								placeholder="请选择部门"
+								style="width: 200px"
+							>
+								<el-option
+									v-for="item in DepartmentList"
+									:key="item.id"
+									:label="item.department_name"
+									:value="item.department_name"
+								/>
+							</el-select>
+							<div class="one flex items-center text-sm" v-if="form.department.includes('分销')">
+								<span>一件代发：</span>
+								<el-radio-group v-model="form.onepieceforshipping" class="ml-4">
+									<el-radio :label="true">是</el-radio>
+									<el-radio :label="false">否</el-radio>
+								</el-radio-group>
+							</div>
+						</el-form-item>
+						<el-form-item label="平台" required>
+							<el-select
+								v-model="form.platform"
+								class="m-2"
+								filterable
+								placeholder="请选择平台"
+								style="width: 200px"
+							>
+								<el-option
+									v-for="item in PlatFormList"
+									:key="item.id"
+									:label="item.platform_name"
+									:value="item.platform_name"
+								/>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="运输方式" required>
+							<el-select
+								v-model="form.transportationMethod"
+								class="m-2"
+								placeholder="请选择运输方式"
+								style="width: 200px"
+							>
+								<el-option
+									v-for="item in TransportationList"
+									:key="item.id"
+									:label="item.name"
+									:value="item.name"
+								/>
+							</el-select>
+						</el-form-item>
 						<el-form-item label="售价" required>
-							<el-input v-model="form.money" placeholder="请输入售价" />
+							<el-input-number
+								class="mx-2"
+								v-model="form.money"
+								:precision="2"
+								:step="0.1"
+								:min="0"
+								controls-position="right"
+								style="width: 100%"
+							/>
 						</el-form-item>
 						<el-form-item label="费比佣金">
-							<el-input v-model="form.feeRatio" placeholder="请输入费比佣金" />
+							<el-input-number
+								class="mx-2"
+								v-model="form.feeRatio"
+								:precision="2"
+								:step="0.1"
+								:min="0"
+								controls-position="right"
+								style="width: 100%"
+							/>
 						</el-form-item>
 						<el-form-item label="查询人员信息" required>
 							<el-input v-model="form.name" placeholder="请输入您的信息" />
